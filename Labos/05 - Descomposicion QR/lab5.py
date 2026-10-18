@@ -1,9 +1,5 @@
 import numpy as np
 
-# A = (A1 | ... | An) -> A = [fil1(A), ... , filn(A)] entonces A^t me da
-#          ( A1)
-#   A^t =  (...)  -> A = [A1, ..., An ] 
-#          (An )
 def transpuesta(A):
     A = np.array(A)
     n, m = A.shape
@@ -39,7 +35,7 @@ def productoPunto(v1, v2):
 
     return res 
 
-def gramSchmidt(A):
+def QR_con_GS(A,tol=1e-12,retorna_nops=False):
     n, m = A.shape
     if n != m: return None
 
@@ -56,16 +52,16 @@ def gramSchmidt(A):
     transQ[0] = a1/norma_a1
     R[0][0] = norma_a1
 
-    for j in range(2,n):
+    for j in range(1,n):
         q_j = columnasAccesiblesDeA[j] # q_j = colJesima(A), falta normalizar
-        for k in range(1, j-1):
-            qk = columnasAccesiblesDeA[j]
+        for k in range(0, j):
+            qk = transQ[k]
             R[k][j] = productoPunto(qk, q_j)
             q_j -= R[k][j]*qk
 
         R[j][j] = norma(q_j, 2)
         transQ[j] = q_j/R[j][j]
-
+    
     return transpuesta(transQ), R
 
 
@@ -90,13 +86,14 @@ def check_QR(Q,R,A,tol=1e-10):
     assert np.allclose(Q @ R, A, atol=tol)
 
 # --- TESTS PARA QR_by_GS2 ---
-Q2,R2 = gramSchmidt(A2)
-print(Q2)
-print(R2)
+Q2,R2 = QR_con_GS(A2)
+# print(Q2)
+# print(R2)
+# print(Q2@R2)
 check_QR(Q2,R2,A2)
 
-Q3,R3 = gramSchmidt(A3)
+Q3,R3 = QR_con_GS(A3)
 check_QR(Q3,R3,A3)
 
-Q4,R4 = gramSchmidt(A4)
+Q4,R4 = QR_con_GS(A4)
 check_QR(Q4,R4,A4)
