@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 ## 1. NORMAS
 def norma(x,p):
@@ -34,7 +33,7 @@ def normaMatMC(A,q,p,Np):
     res = -1
     vector = np.zeros(m)
     for i in range(Np):
-        v = np.random.rand(m)
+        v = np.random.uniform(-1,1,m)
         vNormalizado = v/norma(v, p)
         normaQdeAx = norma(calcularAX(A,vNormalizado), q)
         if normaQdeAx > res:
