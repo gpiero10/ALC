@@ -6,8 +6,8 @@ Eliminacion Gausianna
 import numpy as np
 
 def transponer(A):
-    transA = A.copy()
     m,n = A.shape
+    transA = np.zeros((n,m))
     for i in range(m):
         for j in range(n):
             transA[i][j] = A[j][i]
@@ -21,7 +21,7 @@ def matrizConRangoCompleto(A):
         res &= (A[x][x] != 0)
     return res
 
-def matricesIguales(A, B, atol=1e-8):
+def matricesIguales(A, B, atol=1e-5):
     res = True
     n1, m1 = A.shape
     n2, m2 = B.shape
@@ -40,7 +40,7 @@ def calculaLU(A):
     m=A.shape[0]
     n=A.shape[1]
     Ac = A.copy()
-    
+
     if m!=n:
         print('Matriz no cuadrada')
         return None, None, 0
@@ -104,15 +104,23 @@ def inversa(A):
 
 def calculaLDV(A):
     L, U, n = calculaLU(A)
+    
+    if L is None or U is None: return None, None, None
+
     V, D, m = calculaLU(transponer(U)) # V^t D = U^t
 
     return L,D,transponer(V)
 
-def esSDP(A, atol=1e-8):
-    esSimetrica = matricesIguales(transponer(A), A, atol)
+def esSDP(A, atol=1e-5):
     n,m = A.shape
+    if n != m: return False
+    esSimetrica = matricesIguales(transponer(A), A, atol)
+    
     res = True
     L,D,V = calculaLDV(A)
+
+    if L is None or D is None or V is None: return False
+
     for x in range(n):
         res &= (D[x][x] > atol)
 
